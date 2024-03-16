@@ -1,4 +1,3 @@
-import { CheckCircle } from "lucide-react";
 import moment from "moment";
 import React from "react";
 import useCustomCal, { functionType } from "./useCustomNav";
@@ -13,13 +12,14 @@ type DayOfWeek =
 interface CustomComponentProps {
   disableDay: DayOfWeek[];
   onSelection: functionType;
+  Controller: React.FC;
 }
 const CustomCalendar: React.FC<CustomComponentProps> = ({
   disableDay,
   onSelection,
+  Controller,
 }) => {
   disableDay = Array.from(new Set(disableDay));
-  console.log(`🚀 ~ file: calander.tsx:18 ~ disableDay:`, disableDay);
   const {
     days,
     emptyCellsBefore,
@@ -32,18 +32,22 @@ const CustomCalendar: React.FC<CustomComponentProps> = ({
   const { weekdays } = moment;
 
   return (
-    <div className="h-[500px]">
-      <div className="grid grid-cols-7 p-2 h-8 border-b">
+    <div className="flex flex-col h-full">
+      <Controller />
+      <div className="select-none grid grid-cols-7 h-fit border-b">
         {weekdays().map((day) => (
-          <div key={day} className="text-center truncate m-auto">
+          <div key={day} className="text-end p-2 truncate bg-gray-300">
             {day}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 grid-rows-5 p-2 h-[-webkit-fill-available] border-l">
+      <div className="select-none grid grid-cols-7 grid-rows-6 p-2 h-[-webkit-fill-available] border-l">
         {emptyCellsBefore.reverse().map((value, index) => (
           <div key={`empty-${index}`} className="text-end ">
-            {value}
+            <div className="h-[70px] w-[70px] rounded-full flex items-center justify-center">
+              {/* <CheckCircle className="text-white" /> */}
+              {value}
+            </div>
           </div>
         ))}
         {days.map((day, index) => {
@@ -68,38 +72,46 @@ const CustomCalendar: React.FC<CustomComponentProps> = ({
               onTouchMove={() => handleMouseEnter(day)}
               onTouchEnd={() => handleMouseUp(onSelection)}
             >
-              <div>{day}</div>
               {active ? (
                 selectedDates[selectedDates.length - 1] === selectedDates[0] ? (
-                  <div className="transition-all bg-blue-500 flex items-center justify-center h-[-webkit-fill-available] rounded-r-full mr-8 rounded-l-full ml-8">
-                    <CheckCircle className="text-white" />
+                  <div className="transition-all bg-blue-200 flex items-center justify-center h-[70px] rounded-r-full mr-8 rounded-l-full ml-8">
+                    {day}
                   </div>
                 ) : selectedDates[0] === day ? (
-                  <div className="bg-blue-500 flex items-center justify-center h-[-webkit-fill-available] rounded-l-full ml-8">
-                    {/* hi */}
+                  <div className="bg-blue-200 flex items-center justify-start h-[70px] rounded-l-full">
+                    <div className="h-[70px] w-[70px] rounded-full bg-blue-500 flex items-center justify-center">
+                      {day}
+                    </div>
                   </div>
                 ) : selectedDates[selectedDates.length - 1] === day ? (
-                  <div className="bg-blue-500 flex items-center justify-center h-[-webkit-fill-available] rounded-r-full mr-8">
-                    <CheckCircle className="text-white" />
+                  <div className="relative bg-blue-200 flex items-center justify-end h-[70px] rounded-r-full">
+                    <div className="h-[70px] w-[70px] rounded-full bg-blue-500 flex items-center justify-center">
+                      {day}
+                    </div>
                   </div>
                 ) : (
-                  <div className="bg-blue-500  flex items-center justify-center h-[-webkit-fill-available]"></div>
+                  <div className="bg-blue-200  flex items-center justify-center h-[70px]">
+                    {day}
+                  </div>
                 )
               ) : (
                 <div
-                  className={`transition-all ${
-                    selectedDates[selectedDates.length - 1] === selectedDates[0]
-                      ? "bg-blue-500"
-                      : ""
-                  } bg-blue-500 flex items-center justify-center`}
-                ></div>
+                  className={`transition-all flex items-center justify-center`}
+                >
+                  {" "}
+                  <div className="h-[70px] w-[70px] rounded-full flex items-center justify-center">
+                    {day}
+                  </div>
+                </div>
               )}
             </div>
           );
         })}
         {emptyCellsAfter.map((value, index) => (
           <div key={`empty-${index}`} className="text-end ">
-            {value}
+            <div className="h-[70px] w-[70px] rounded-full flex items-center justify-center">
+              {value}
+            </div>
           </div>
         ))}
       </div>
